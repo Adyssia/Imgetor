@@ -223,7 +223,6 @@ int main()
 
 void crypt(char str[MSG_MAX])
 {
-	return;
 	char *encryption_path = "encryption_key.txt";
 
 	ifstream encryption_file(encryption_path, ios::in);
