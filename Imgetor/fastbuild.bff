@@ -1,0 +1,85 @@
+// Testing fastbuild in Imgetor project
+
+// Windows Platforms
+.VSBasePath         = 'C:\Program Files (x86)\Microsoft Visual Studio 14.0'
+.WindowsSdk81Path   = 'C:\Program Files (x86)\Windows Kits\8.1'
+.WindowsSdk10Path   = 'C:\Program Files (x86)\Windows Kits\10'
+
+
+Settings 
+{
+    .Environment   = { "PATH=$VSBasePath$\Common7\IDE\;$VSBasePath$\VC\Bin\",
+                       "TEMP=C:\Windows\Temp",
+                       "SystemRoot=C:\Windows" }
+}
+
+// Toolchain
+.Compiler          = '$VSBasePath$\VC\bin\cl.exe'
+.CompilerOptions   = '"%1"'
+                   + '  /Fo"%2"'
+                   + '  /Z7'
+                   + '  /c'
+                   + '  /nologo'
+                   + '  /W4'
+                   + '  /WX'
+                   + '  /EHsc'
+                   + '  /MDd'
+                   + '  /Gd'
+                   + '  /Zc:wchar_t'
+                   + '  /D _LIB'
+                   + '  /D _CONSOLE'
+                   + '  /RTC1'
+                   + '  /D WIN32'
+.Linker            = '$VSBasePath$\VC\Bin\link.exe'
+.LinkerOptions     = '  /OUT:"%2"'
+                   + '  "%1"'
+                   + '  /WX'
+                   + '  /NOLOGO'
+                   + '  /DEBUG'
+                   + '  /NODEFAULTLIB'
+                   + '  /SUBSYSTEM:CONSOLE'
+                   + '  /INCREMENTAL'
+                   + '  /TLBID:3'
+                   + '  /DYNAMICBASE'
+                   + '  /NXCOMPAT'
+                   + '  /MACHINE:X86'
+                   + '  /IMPLIB:J:\fastbuild_treenaus\Imgetor-master\out\Imgetor.lib'
+
+// Include paths
+.BaseIncludePaths  = '  /I"./"'
+                   + '  /I"$VSBasePath$/VC/include/"'
+                   + '  /I"$WindowsSdk10Path$\Include\10.0.10240.0\um"'
+                   + '  /I"$WindowsSdk10Path$\Include\10.0.10240.0\ucrt"'
+
+.CompilerOptions   + .BaseIncludePaths
+
+// Library
+
+.LibPaths          = '  /LIBPATH:"$WindowsSdk81Path$\Lib\winv6.3\um\x86"'
+                   + '  /LIBPATH:"$VSBasePath$\VC\lib"'
+                   + '  /LIBPATH:"$WindowsSdk10Path$\Lib\10.0.10240.0\ucrt\x86"'
+.LinkerOptions     + .LibPaths
+
+//Imgetor
+
+ObjectList(  'Imgetor-Lib')
+{
+    .CompilerInputPath  = '\'
+    .CompilerOutputPath = 'Out\'
+}
+
+Executable('Imgetor')
+{
+    .Libraries         = { "Imgetor-Lib" }
+    .LinkerOutput      = 'Out\Imgetor.exe'
+    .LinkerOptions     + ' libcmtd.lib'
+                       + ' kernel32.lib'
+                       + ' msvcprtd.lib'
+                       + ' msvcrtd.lib'
+                       + ' vcruntimed.lib'
+                       + ' oldnames.lib'
+                       + ' ucrtd.lib'
+}
+
+//All
+Alias( 'all' ) { .Targets = { 'Imgetor' } }
