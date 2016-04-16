@@ -1,6 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
+//#include "stdio.h"
 using namespace std;
 
 #define READ 0
@@ -14,6 +15,7 @@ void crypt(char str[MSG_MAX]);
 
 int main()
 {
+    //int mode1 = 1;
 	int mode = 2;
 	char *source_path = 0;
 	char *message_path = "payload.txt";
@@ -65,13 +67,12 @@ int main()
 			return -1;
 		}
 		message_file.seekg(0, ios::end);
-		streampos message_size = message_file.tellg();
+		msg_len = static_cast<int>(message_file.tellg());
 		message_file.seekg(0, ios::beg);
 		//message = new char[(int)message_size];
-		message_file.read(message, message_size);
+		message_file.read(message, msg_len);
 		message_file.close();
 
-		msg_len = message_size;
 
 		crypt(message);
 	}
@@ -91,7 +92,7 @@ int main()
 		return -1;
 	}
 	image.seekg(0, ios::end);
-	int size = image.tellg();
+	int size = static_cast<int>(image.tellg());
 	image.seekg(0, ios::beg);
 	image.read(buff, size);
 	image.close();
@@ -107,7 +108,7 @@ int main()
 	// TODO Little endian. Add proper cast.
 	int header_size = buff[14] + 14;			// 14 - 17  Header_remaining + header_behind 
 	int pixelmap_offset = header_size;			// 10 - 13	
-	int witdh = buff[18];						// 18 - 21
+	//int witdh = buff[18];						// 18 - 21
 	int height = buff[22];						// 22 - 25
 	int bytes_per_pixel = 3;
 	int row_padding_size = 3;
@@ -234,7 +235,7 @@ void crypt(char str[MSG_MAX])
 		exit(-1);
 	}
 	encryption_file.seekg(0, ios::end);
-	int key_len = encryption_file.tellg();
+	int key_len = static_cast<int>(encryption_file.tellg());
 	char *key = new char[key_len];
 	encryption_file.seekg(0, ios::beg);
 	encryption_file.read(key, key_len);
